@@ -1,4 +1,4 @@
-# SANet-style-transfer-
+# SANet-style-transfer
 A repo from GlebBrykin's archived repo of the paper "Arbitrary Style Transfer with Style-Attentional Networks"  
 
 I decided to maintain this repo from GlebBrykin since I was interested in the original paper and found a few bugs in his original repo. Therefore, I put the slightly fixed version here so it might help to for your own project.  
