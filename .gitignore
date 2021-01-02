@@ -1,0 +1,17 @@
+*.pyc
+data/
+__pycache__/
+checkpoints/
+*.pth
+*.jpg
+RSIdata/
+runs/
+.idea
+.idea/
+input/
+output/
+style/
+decoder_iter_500000.pth
+transformer_iter_500000.pth
+vgg_normalised.pth
+experiments/
