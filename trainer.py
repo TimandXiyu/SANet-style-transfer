@@ -13,7 +13,6 @@ from PIL import ImageFile
 from tensorboardX import SummaryWriter
 from torchvision import transforms
 from tqdm import tqdm
-from apex import amp
 
 
 def calc_mean_std(feat, eps=1e-5):
@@ -308,7 +307,6 @@ def adjust_learning_rate(optimizer, iteration_count):
 
 
 if __name__ == "__main__":
-    opt_level = 'O1'
     parser = argparse.ArgumentParser()
     # Basic options
     parser.add_argument('--content_dir', type=str, default='./train2014',
@@ -333,8 +331,8 @@ if __name__ == "__main__":
     parser.add_argument('--start_iter', type=float, default=0)
     args = parser.parse_args('')
 
-    args.content_dir = r'data/src_img'
-    args.style_dir = r'data/alien_img'
+    args.content_dir = 
+    args.style_dir = 
 
     args.batch_size = 2
 
