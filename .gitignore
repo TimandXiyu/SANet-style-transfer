@@ -1,7 +1,7 @@
 *.pyc
 data/
 __pycache__/
-checkpoints/
+checkpoints_save/
 *.pth
 *.jpg
 RSIdata/
@@ -14,6 +14,4 @@ style/
 decoder_iter_500000.pth
 transformer_iter_500000.pth
 vgg_normalised.pth
-experiments/
-generator.py
-random_pair_gen.py
+
