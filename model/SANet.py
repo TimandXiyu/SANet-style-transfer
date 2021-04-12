@@ -116,7 +116,7 @@ class Net(nn.Module):
         return self.mse_loss(input_mean, target_mean) + \
                self.mse_loss(input_std, target_std)
 
-    def forward(self, content, style, content_mask, gen=False):
+    def forward(self, content, style, gen=False):
         style_feats = self.encode_with_intermediate(style)
         content_feats = self.encode_with_intermediate(content)
         stylized = self.transform(content_feats[3], style_feats[3], content_feats[4], style_feats[4])
@@ -142,6 +142,6 @@ class Net(nn.Module):
             return result, loss_c, loss_s, l_identity1, l_identity2
 
         result = self.decoder(self.transform(content_feats[3], style_feats[3], content_feats[4], style_feats[4]))
-        road_identity = self.calc_content_loss(content * content_mask, result * content_mask, norm=False)
-        return loss_c, loss_s, l_identity1, l_identity2, road_identity
-        # return loss_c, loss_s, l_identity1, l_identity2
+        # road_identity = self.calc_content_loss(content * content_mask, result * content_mask, norm=False)
+        # return loss_c, loss_s, l_identity1, l_identity2, road_identity
+        return loss_c, loss_s, l_identity1, l_identity2

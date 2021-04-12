@@ -28,8 +28,8 @@ def gen_image(content_pth, style_pth, output_folder, serial_num, vgg, decoder, e
     vgg.load_state_dict(torch.load(vgg_pth))
     vgg = nn.Sequential(*list(vgg.children())[:44])
     network = Net(vgg, decoder, start_iter)
-    network.decoder.load_state_dict(torch.load(r'E:\SANet CP\style1content3\decoder_iter_300000.pth'))
-    network.transform.load_state_dict(torch.load(r'E:\SANet CP\style1content3\transformer_iter_300000.pth'))
+    network.decoder.load_state_dict(torch.load(r'E:\SANet CP\style3content1\decoder_iter_300000.pth'))
+    network.transform.load_state_dict(torch.load(r'E:\SANet CP\style3content1\transformer_iter_300000.pth'))
     network.train()
     network.cuda()
 
@@ -67,27 +67,28 @@ def gen_pair(content_folder, style_folder, n_pair):
                        list(np.random.choice(content, n_pair, replace=True, p=None))))
     style = list(map(lambda x: str(Path(style_folder).parent / Path(x + suffix)),
                      list(np.random.choice(style, n_pair, replace=True, p=None))))
-    zipped = dict(zip(content, style))
-    content_masks = list(map(lambda x: Path(x).parent.parent / 'train_mask' / Path(str(Path(x).stem) + '.png'), zipped))
-    return dict(zip(content, style)), content_masks
+    content = list(content)
+    style = list(style)
+    content_masks = list(map(lambda x: Path(x).parent.parent / 'true_mask' / Path(str(Path(x).stem) + '.png'), content))
+    return content, style, content_masks
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    content_folder = r'F:/XiyuUnderGradThesis/data/train_img/*.png'
-    style_folder = r'F:/XiyuUnderGradThesis/data/cropped_cz_src/*.png'
-    output_folder = Path(r'F:/XiyuUnderGradThesis/data/generated_cz_data_c3s1')
-    pairs, content_masks = gen_pair(content_folder, style_folder, n_pair=1000)
-    logging.info('total length', len(pairs))
+    content_folder = r'./data/0.3dp/true_img/*.png'
+    style_folder = r'./data/0.3dp/other_train_img/*.png'
+    output_folder = Path(r'./data/1000_random_dg/')
+    content, style, content_masks = gen_pair(content_folder, style_folder, n_pair=1000)
+    logging.info('total length', len(content))
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
     if not os.path.exists(output_folder / 'generate_img'):
         os.mkdir(output_folder / 'generate_img')
     if not os.path.exists(output_folder / 'generate_mask'):
         os.mkdir(output_folder / 'generate_mask')
-    for i, key in tqdm(enumerate(pairs)):
+    for i, key in tqdm(enumerate(content)):
         content_mask = content_masks[i]
-        valid = gen_image(key, pairs[key], str(output_folder / 'generate_img'),
+        valid = gen_image(key, style[i], str(output_folder / 'generate_img'),
                           serial_num=str(i + 6226),
                           vgg=vgg,
                           decoder=decoder)

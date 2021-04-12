@@ -24,7 +24,7 @@ if __name__ == "__main__":
     vgg_pth = r'./vgg_normalised.pth'
     decoder = decoder()
     vgg = vgg()
-    start_iter = 0
+    start_iter = 18000
     content_dir = r'F:/XiyuUnderGradThesis/data/train_img'
     style_dir = r'F:/XiyuUnderGradThesis/data/cropped_cz_mask'
     lr = 1e-4
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     vgg.load_state_dict(torch.load(vgg_pth))
     vgg = nn.Sequential(*list(vgg.children())[:44])
     network = Net(vgg, decoder, start_iter)
-    network.decoder.load_state_dict(torch.load(r'.\decoder_iter_500000.pth'))
-    network.transform.load_state_dict(torch.load(r'.\transformer_iter_500000.pth'))
+    network.decoder.load_state_dict(torch.load(r'.\checkpoints_save\decoder_iter_62000.pth'))
+    network.transform.load_state_dict(torch.load(r'.\checkpoints_save\transformer_iter_18000.pth'))
     network.train()
     network.to(device)
 
@@ -64,8 +64,8 @@ if __name__ == "__main__":
     network, optimizer = amp.initialize(network, optimizer, opt_level="O1")
 
     writer = SummaryWriter(comment=f'LR_{lr}_BS_{batchsize}')
-    # if (start_iter > 0):
-    # optimizer.load_state_dict(torch.load(r'.\checkpoints_save\optimizer_iter_92000.pth'))
+    if (start_iter > 0):
+        optimizer.load_state_dict(torch.load(r'.\checkpoints_save\optimizer_iter_62000.pth'))
     global_step = 0
 
     with tqdm(total=max_iter - start_iter,
@@ -102,17 +102,17 @@ if __name__ == "__main__":
                 writer.add_scalar('loss', running_avg_loss / 100, global_step)
                 running_avg_loss = 0
 
-            if global_step % 1000 == 0:
-                for tag, value in network.decoder.named_parameters():
-                    tag = tag.replace('.', '/')
-                    writer.add_histogram('dec_weights/' + tag, value.data.cpu().numpy(), global_step)
-                    writer.add_histogram('dec_grads/' + tag, value.grad.data.cpu().numpy(), global_step)
-                writer.add_scalar('dec_learning_rate', optimizer.param_groups[0]['lr'], global_step)
-                for tag, value in network.transform.named_parameters():
-                    tag = tag.replace('.', '/')
-                    writer.add_histogram('trans_weights/' + tag, value.data.cpu().numpy(), global_step)
-                    writer.add_histogram('trans_grads/' + tag, value.grad.data.cpu().numpy(), global_step)
-                writer.add_scalar('trans_learning_rate', optimizer.param_groups[0]['lr'], global_step)
+            # if global_step % 1000 == 0:
+            #     for tag, value in network.decoder.named_parameters():
+            #         tag = tag.replace('.', '/')
+            #         # writer.add_histogram('dec_weights/' + tag, value.data.cpu().numpy(), global_step)
+            #         # writer.add_histogram('dec_grads/' + tag, value.grad.data.cpu().numpy(), global_step)
+            #     writer.add_scalar('dec_learning_rate', optimizer.param_groups[0]['lr'], global_step)
+            #     for tag, value in network.transform.named_parameters():
+            #         tag = tag.replace('.', '/')
+            #         # writer.add_histogram('trans_weights/' + tag, value.data.cpu().numpy(), global_step)
+            #         # writer.add_histogram('trans_grads/' + tag, value.grad.data.cpu().numpy(), global_step)
+            #     writer.add_scalar('trans_learning_rate', optimizer.param_groups[0]['lr'], global_step)
 
             if (i + 1) % save_model_interval == 0 or (i + 1) == max_iter:
                 state_dict = decoder.state_dict()
